@@ -1,3 +1,2 @@
-streamlit
-qrcode
-PIL
+qrcode==7.4.2
+Pillow==9.5.0
