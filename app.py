@@ -2,6 +2,7 @@ import streamlit as st
 import qrcode
 from PIL import Image
 from io import BytesIO
+import pyshorteners as ps
 
 
 def generate_qr(data, logo=None):
@@ -28,22 +29,26 @@ def generate_qr(data, logo=None):
 st.title("Gerador de QR Code")
 
 title = st.text_input("Insira o nome do arquivo de saída")
-data = st.text_area("Insira os dados do QR Code")
 
-logo_path = (
-    "logo.png"  # Coloque o caminho para o logo aqui, se não estiver na mesma pasta
-)
-logo = Image.open(logo_path)
+url = st.text_input("Insira o link do arquivo")
 
 if st.button("Gerar QR Code"):
-    img_qr = generate_qr(data, logo)
+    url_short = ps.Shortener().tinyurl.short(url)
+    st.write(f"Link curto:{url_short}")
+
+    logo_path = "logo.png"
+    logo = Image.open(logo_path)
+
+    img_qr = generate_qr(url_short, logo)
     img_byte_arr = BytesIO()
     img_qr.save(img_byte_arr, format="PNG")
     img_byte_arr = img_byte_arr.getvalue()
-    st.image(img_qr, use_column_width=True)
+    
     st.download_button(
         label="Download QR Code",
         data=img_byte_arr,
         file_name=title + ".png",
         mime="image/png",
     )
+
+    st.image(img_qr, use_column_width=True)
